@@ -14,6 +14,8 @@ repositories {
 }
 
 dependencies {
+	implementation 'LibraryJar-groupId:library-jar:0.0.2'
+	
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -21,4 +23,16 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+allprojects {
+	repositories { 
+		maven { 
+			url 'https://pkgs.dev.azure.com/SecOrgOad3/cicd-training-env/_packaging/cicd-training-env-feed-001/maven/v1' 
+			credentials { 
+				username "cicd-training-env-feed-001" 
+				password System.getenv("SYSTEM_ACCESSTOKEN") != null ? System.getenv("SYSTEM_ACCESSTOKEN") : vstsMavenAccessToken 
+			} 
+		} 
+	}
 }
