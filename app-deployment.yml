@@ -1,9 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    io.kompose.service: sprongbootapp
-  name: sprongbootapp
+  name: sprongbootapp-deployment
 spec:
   replicas: 1
   selector:
