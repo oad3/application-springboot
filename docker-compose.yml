@@ -1,0 +1,7 @@
+version: '3'
+services:
+  myapp:
+    image: oad3jp999/application-springboot:0.0.1
+    container_name: application-springboot
+    ports:
+     - "8080:8080"
