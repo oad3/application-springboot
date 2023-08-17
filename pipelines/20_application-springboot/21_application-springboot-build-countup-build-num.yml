@@ -19,24 +19,21 @@ stages:
           - checkout: self
 
           - bash: |
+              source ./env-files/my_env01_vars.env
+              source ./gradle.properties
+
               echo ----- git clone config repo
-              git clone https://$(github-token)@github.com/oad3/application-springboot-config.git
-              cd application-springboot-config
+              chmod 744 ./shell/git-clone.sh
+              ./shell/git-clone.sh --url ${GIT_URL} \
+              --github_user $(github-user) \
+              --github_token $(github-token)
+
               echo ----- ls -la
               ls -la
 
-              echo ----- Count Up Build Num
-              APP=application-springboot
-              VERSION_FILE="version/CURRENT_VERSION"
-              if [ -f "${VERSION_FILE}" ]; then
-                echo "${VERSION_FILE} exist"
-                VERSION=$(cat ${VERSION_FILE})
-              else
-                echo "${VERSION_FILE} not exist"
-                exit 1
-              fi
-              echo ${CURRENT_VERSION}
-              VERSION_COUNT_FILE="version/${APP}-${VERSION}"
+              APP=`echo "${applicationName}" | sed 's/\n//g'`
+              VERSION=`echo "${version}" | sed 's/\n//g'`
+              VERSION_COUNT_FILE="${GIT_CONFIG_REPO}/version/${APP}-${VERSION}"
               if [ -f "${VERSION_COUNT_FILE}" ]; then
                 echo "${VERSION_COUNT_FILE} exist"
                 PRE_VERSION=$(cat "${VERSION_COUNT_FILE}")
@@ -47,20 +44,21 @@ stages:
                 echo "${VERSION_COUNT_FILE} not exist"
                 echo 1 > "${VERSION_COUNT_FILE}"
                 echo "created VERSION_COUNT_FILE for version 1"
+                ADD_VERSION=0
+                echo "ADD_VERSION : ${ADD_VERSION}"
               fi
               echo "##vso[task.setvariable variable=version;]${VERSION}-${ADD_VERSION}"
 
-              echo ----- git push VERSION_COUNT_FILE
-              git config --global user.email "$(email)"
-              git config --global user.name "$(name)"
-              git add :
-              git commit -a -m "Count Up Build Num"
-              git push https://$(github-token)@github.com/oad3/application-springboot-config.git --all
+              ./shell/git-push.sh \
+              --url $GIT_URL \
+              --github_user $(github-user) \
+              --github_token $(github-token) \
+              --github_repo $GIT_CONFIG_REPO \
+              --github_email $GIT_EMAIL \
+              --github_name $GIT_NAME
             displayName: "Count Up Build Num"
 
           - bash: |
-              echo ----- git clone build target
-              git clone https://$(github-token)@github.com/oad3/application-springboot.git
               echo ----- git clone build target version
               echo $(version)
               echo ----- path of JAVA_HOME_11_X64
