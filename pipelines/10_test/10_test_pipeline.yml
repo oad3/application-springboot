@@ -1,26 +1,26 @@
 trigger:
-- none
+  - none
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: "ubuntu-latest"
 
 resources:
   repositories:
-  - repository: 'application-springboot'
-    type: github
-    ref: main
-    endpoint: '20220501'
-    name: 'oad3/application-springboot'
+    - repository: "application-springboot"
+      type: github
+      ref: main
+      endpoint: "GitHub-Service-Connection"
+      name: "oad3/application-springboot"
 
 stages:
-- stage: stage_test
-  jobs: 
-  - job: MyJob
-    displayName: MyJob_1
-    workspace:
-      clean: outputs
-    steps:
-    - script: ls -la
-    - checkout: self
-    - checkout: 'application-springboot'
-    - script: ls -la
+  - stage: stage_test
+    jobs:
+      - job: MyJob
+        displayName: MyJob_1
+        workspace:
+          clean: outputs
+        steps:
+          - script: ls -la
+          - checkout: self
+          - checkout: "application-springboot"
+          - script: ls -la
