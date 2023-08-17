@@ -49,6 +49,7 @@ stages:
               fi
               echo "##vso[task.setvariable variable=version;]${VERSION}-${ADD_VERSION}"
 
+              chmod 744 ./shell/git-push.sh
               ./shell/git-push.sh \
               --url $GIT_URL \
               --github_user $(github-user) \
