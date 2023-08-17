@@ -15,7 +15,7 @@ resources:
     - repository: "application-springboot"
       type: github
       ref: main
-      endpoint: "20221113"
+      endpoint: "GitHub-Service-Connection"
       name: "oad3/application-springboot"
 
 stages:
