@@ -1,0 +1,66 @@
+trigger:
+  - none
+
+parameters:
+  - name: BuildTag
+    displayName: BuildTag (ex x.x.x)
+    type: string
+    default: ""
+
+pool:
+  vmImage: "ubuntu-latest"
+
+resources:
+  repositories:
+    - repository: "application-springboot"
+      type: github
+      ref: main
+      endpoint: "20221113"
+      name: "oad3/application-springboot"
+
+stages:
+  - stage: BuildStage
+    jobs:
+      - job: BuildJob
+        displayName: "Gradle Build And Docker Build Push"
+        continueOnError: false
+        workspace:
+          clean: outputs
+        steps:
+          - checkout: self
+          - checkout: application-springboot
+          - bash: |
+              echo $JAVA_HOME_11_X64
+          - task: Gradle@2
+            displayName: Gradle Build and Test
+            inputs:
+              gradleWrapperFile: "./application-springboot/gradlew"
+              workingDirectory: "./application-springboot"
+              tasks: "build test"
+              publishJUnitResults: true
+              testResultsFiles: "**/TEST-*.xml"
+              javaHomeOption: "path"
+              jdkDirectory: "$(JAVA_HOME_11_X64)"
+              sonarQubeRunAnalysis: false
+              spotBugsAnalysis: false
+            env:
+              SYSTEM_ACCESSTOKEN: "$(System.AccessToken)"
+          - bash: |
+              ls -la ./application-springboot/build/libs/
+          - task: Docker@2
+            displayName: Login to Docker Hub
+            inputs:
+              command: login
+              containerRegistry: "DockerRegistryServiceConnection"
+          - task: Docker@2
+            displayName: Docker Build and Push
+            inputs:
+              Dockerfile: "./application-springboot/Dockerfile"
+              command: buildAndPush
+              repository: "oad3jp999/application-springboot"
+              tags: "${{ parameters.BuildTag }}"
+          - task: Docker@2
+            displayName: Logout of Docker Hub
+            inputs:
+              command: logout
+              containerRegistry: "DockerRegistryServiceConnection"

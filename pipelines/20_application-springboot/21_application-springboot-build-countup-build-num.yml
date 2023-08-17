@@ -1,0 +1,101 @@
+trigger:
+  - none
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  - group: variablegroup
+
+stages:
+  - stage: BuildStage
+    jobs:
+      - job: BuildJob
+        displayName: "Gradle Build and Docker Build & Push"
+        continueOnError: false
+        workspace:
+          clean: outputs
+        steps:
+          - checkout: self
+
+          - bash: |
+              echo ----- git clone config repo
+              git clone https://$(github-token)@github.com/oad3/application-springboot-config.git
+              cd application-springboot-config
+              echo ----- ls -la
+              ls -la
+
+              echo ----- Count Up Build Num
+              APP=application-springboot
+              VERSION_FILE="version/CURRENT_VERSION"
+              if [ -f "${VERSION_FILE}" ]; then
+                echo "${VERSION_FILE} exist"
+                VERSION=$(cat ${VERSION_FILE})
+              else
+                echo "${VERSION_FILE} not exist"
+                exit 1
+              fi
+              echo ${CURRENT_VERSION}
+              VERSION_COUNT_FILE="version/${APP}-${VERSION}"
+              if [ -f "${VERSION_COUNT_FILE}" ]; then
+                echo "${VERSION_COUNT_FILE} exist"
+                PRE_VERSION=$(cat "${VERSION_COUNT_FILE}")
+                ADD_VERSION=$((${PRE_VERSION} + 1))
+                echo "ADD_VERSION : ${ADD_VERSION}"
+                echo ${ADD_VERSION} > "${VERSION_COUNT_FILE}"
+              else
+                echo "${VERSION_COUNT_FILE} not exist"
+                echo 1 > "${VERSION_COUNT_FILE}"
+                echo "created VERSION_COUNT_FILE for version 1"
+              fi
+              echo "##vso[task.setvariable variable=version;]${VERSION}-${ADD_VERSION}"
+
+              echo ----- git push VERSION_COUNT_FILE
+              git config --global user.email "$(email)"
+              git config --global user.name "$(name)"
+              git add :
+              git commit -a -m "Count Up Build Num"
+              git push https://$(github-token)@github.com/oad3/application-springboot-config.git --all
+            displayName: "Count Up Build Num"
+
+          - bash: |
+              echo ----- git clone build target
+              git clone https://$(github-token)@github.com/oad3/application-springboot.git
+              echo ----- git clone build target version
+              echo $(version)
+              echo ----- path of JAVA_HOME_11_X64
+              echo $JAVA_HOME_11_X64
+            displayName: "Get pre info"
+
+          - task: Gradle@2
+            displayName: Gradle Build and Test
+            inputs:
+              gradleWrapperFile: "./application-springboot/gradlew"
+              workingDirectory: "./application-springboot"
+              tasks: "build test"
+              publishJUnitResults: true
+              testResultsFiles: "**/TEST-*.xml"
+              javaHomeOption: "path"
+              jdkDirectory: "$(JAVA_HOME_11_X64)"
+              sonarQubeRunAnalysis: false
+              spotBugsAnalysis: false
+            env:
+              SYSTEM_ACCESSTOKEN: "$(System.AccessToken)"
+
+          - task: Docker@2
+            displayName: Login to Docker Hub
+            inputs:
+              command: login
+              containerRegistry: "DockerRegistryServiceConnection"
+          - task: Docker@2
+            displayName: Docker Build and Push
+            inputs:
+              Dockerfile: "./application-springboot/Dockerfile"
+              command: buildAndPush
+              repository: "oad3jp999/application-springboot"
+              tags: "$(version)"
+          - task: Docker@2
+            displayName: Logout of Docker Hub
+            inputs:
+              command: logout
+              containerRegistry: "DockerRegistryServiceConnection"
