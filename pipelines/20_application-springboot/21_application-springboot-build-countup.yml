@@ -1,11 +1,11 @@
 trigger:
   - none
 
-# pool:
-#   vmImage: "ubuntu-latest"
-
 pool:
-  name: Self-Hosted-Linux
+  vmImage: "ubuntu-latest"
+
+# pool:
+#   name: Self-Hosted-Linux
 
 variables:
   - group: variablegroup
@@ -98,29 +98,29 @@ stages:
           #   env:
           #     SYSTEM_ACCESSTOKEN: "$(System.AccessToken)"
 
-          - bash: |
-              chmod 744 ./gradlew
-              ./gradlew clean build -PpublishVersion=$(count_version)
-              ls -la
-              ls -la ./build
-              ls -la ./build/libs
-              ./gradlew publish -PvstsMavenAccessToken=$(System.AccessToken) -PpublishVersion=$(count_version)
-            displayName: "Gradle Build & Publish"
+          # - bash: |
+          #     chmod 744 ./gradlew
+          #     ./gradlew clean build -PpublishVersion=$(count_version)
+          #     ls -la
+          #     ls -la ./build
+          #     ls -la ./build/libs
+          #     ./gradlew publish -PvstsMavenAccessToken=$(System.AccessToken) -PpublishVersion=$(count_version)
+          #   displayName: "Gradle Build & Publish"
 
-          - task: Docker@2
-            displayName: Login to Docker Hub
-            inputs:
-              command: login
-              containerRegistry: "DockerRegistryServiceConnection"
-          - task: Docker@2
-            displayName: Docker Build and Push
-            inputs:
-              Dockerfile: "./Dockerfile"
-              command: buildAndPush
-              repository: "oad3jp999/application-springboot"
-              tags: "$(count_version)"
-          - task: Docker@2
-            displayName: Logout of Docker Hub
-            inputs:
-              command: logout
-              containerRegistry: "DockerRegistryServiceConnection"
+          # - task: Docker@2
+          #   displayName: Login to Docker Hub
+          #   inputs:
+          #     command: login
+          #     containerRegistry: "DockerRegistryServiceConnection"
+          # - task: Docker@2
+          #   displayName: Docker Build and Push
+          #   inputs:
+          #     Dockerfile: "./Dockerfile"
+          #     command: buildAndPush
+          #     repository: "oad3jp999/application-springboot"
+          #     tags: "$(count_version)"
+          # - task: Docker@2
+          #   displayName: Logout of Docker Hub
+          #   inputs:
+          #     command: logout
+          #     containerRegistry: "DockerRegistryServiceConnection"
