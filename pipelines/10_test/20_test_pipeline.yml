@@ -1,0 +1,26 @@
+trigger:
+  - none
+
+pool:
+  name: vaio
+
+resources:
+  repositories:
+    - repository: "application-springboot"
+      type: github
+      ref: main
+      endpoint: "GitHub-Service-Connection"
+      name: "oad3/application-springboot"
+
+stages:
+  - stage: stage_test
+    jobs:
+      - job: MyJob
+        displayName: MyJob_1
+        workspace:
+          clean: outputs
+        steps:
+          - script: ls -la
+          - checkout: self
+          - checkout: "application-springboot"
+          - script: ls -la
