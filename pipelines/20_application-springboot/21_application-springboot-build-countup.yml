@@ -76,7 +76,8 @@ stages:
               git config --global user.name "$(name)"
               git add :
               git commit -a -m "Count Up Build Num"
-              git push https://$(github-token)@github.com/oad3/application-springboot-config.git --all
+              # git push https://$(github-token)@github.com/oad3/application-springboot-config.git --all
+              git push origin main
             displayName: "Count Up Build Num"
 
           - bash: |
