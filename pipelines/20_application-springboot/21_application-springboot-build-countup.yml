@@ -92,7 +92,7 @@ stages:
               publishJUnitResults: true
               testResultsFiles: "**/TEST-*.xml"
               javaHomeOption: "path"
-              jdkDirectory: "$(JAVA_HOME_11_X64)"
+              jdkDirectory: "/usr/lib/jvm/java-11-openjdk-amd64"
               sonarQubeRunAnalysis: false
               spotBugsAnalysis: false
             env:
