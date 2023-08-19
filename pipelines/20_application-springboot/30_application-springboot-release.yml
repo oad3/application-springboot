@@ -14,7 +14,7 @@ variables:
   - group: variablegroup
 
 stages:
-  - stage: Releasetage
+  - stage: ReleaseStage
     jobs:
       - job: release
         displayName: "release"
