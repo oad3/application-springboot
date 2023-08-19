@@ -41,6 +41,7 @@ stages:
 
               echo ----- ls -la
               ls -la
+              ls -la ${GIT_CONFIG_REPO}
 
               APP=`echo ${applicationName} | sed 's/\n//g'`
               VERSION=`echo ${version} | sed 's/\n//g'`
