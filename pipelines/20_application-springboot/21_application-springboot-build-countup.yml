@@ -100,7 +100,7 @@ stages:
 
           - bash: |
               chmod 744 ./gradlew
-              ./gradlew clean build -PpublishVersion=$(count_version)
+              ./gradlew clean build -PvstsMavenAccessToken=$(System.AccessToken) -PpublishVersion=$(count_version)
               ls -la
               ls -la ./build
               ls -la ./build/libs
