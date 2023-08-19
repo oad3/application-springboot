@@ -7,6 +7,14 @@ pool:
 variables:
   - group: variablegroup
 
+resources:
+  repositories:
+    - repository: "application-springboot-config"
+      type: github
+      ref: main
+      endpoint: "GitHub-Service-Connection"
+      name: "oad3/application-springboot-config"
+
 stages:
   - stage: BuildStage
     jobs:
@@ -17,22 +25,23 @@ stages:
           clean: outputs
         steps:
           - checkout: self
+          - checkout: "application-springboot-config"
 
           - bash: |
               source ./env-files/my_env01_vars.env
               source ./gradle.properties
 
-              echo ----- git clone config repo
-              chmod 744 ./shell/git-clone.sh
-              ./shell/git-clone.sh --url ${GIT_URL} \
-              --github_user $(github-user) \
-              --github_token $(github-token)
+              # echo ----- git clone config repo
+              # chmod 744 ./shell/git-clone.sh
+              # ./shell/git-clone.sh --url ${GIT_URL} \
+              # --github_user $(github-user) \
+              # --github_token $(github-token)
 
               echo ----- ls -la
               ls -la
 
-              APP=`echo "${applicationName}" | sed 's/\n//g'`
-              VERSION=`echo "${version}" | sed 's/\n//g'`
+              APP=`echo ${applicationName} | sed 's/\n//g'`
+              VERSION=`echo ${version} | sed 's/\n//g'`
               VERSION_COUNT_FILE="${GIT_CONFIG_REPO}/version/${APP}-${VERSION}"
               if [ -f "${VERSION_COUNT_FILE}" ]; then
                 echo "${VERSION_COUNT_FILE} exist"
@@ -66,35 +75,35 @@ stages:
               echo $JAVA_HOME_11_X64
             displayName: "Get pre info"
 
-          - task: Gradle@2
-            displayName: Gradle Build and Test
-            inputs:
-              gradleWrapperFile: "./gradlew"
-              workingDirectory: "./"
-              tasks: "build test"
-              publishJUnitResults: true
-              testResultsFiles: "**/TEST-*.xml"
-              javaHomeOption: "path"
-              jdkDirectory: "$(JAVA_HOME_11_X64)"
-              sonarQubeRunAnalysis: false
-              spotBugsAnalysis: false
-            env:
-              SYSTEM_ACCESSTOKEN: "$(System.AccessToken)"
+          # - task: Gradle@2
+          #   displayName: Gradle Build and Test
+          #   inputs:
+          #     gradleWrapperFile: "./gradlew"
+          #     workingDirectory: "./"
+          #     tasks: "build test"
+          #     publishJUnitResults: true
+          #     testResultsFiles: "**/TEST-*.xml"
+          #     javaHomeOption: "path"
+          #     jdkDirectory: "$(JAVA_HOME_11_X64)"
+          #     sonarQubeRunAnalysis: false
+          #     spotBugsAnalysis: false
+          #   env:
+          #     SYSTEM_ACCESSTOKEN: "$(System.AccessToken)"
 
-          - task: Docker@2
-            displayName: Login to Docker Hub
-            inputs:
-              command: login
-              containerRegistry: "DockerRegistryServiceConnection"
-          - task: Docker@2
-            displayName: Docker Build and Push
-            inputs:
-              Dockerfile: "./Dockerfile"
-              command: buildAndPush
-              repository: "oad3jp999/application-springboot"
-              tags: "$(count_version)"
-          - task: Docker@2
-            displayName: Logout of Docker Hub
-            inputs:
-              command: logout
-              containerRegistry: "DockerRegistryServiceConnection"
+          # - task: Docker@2
+          #   displayName: Login to Docker Hub
+          #   inputs:
+          #     command: login
+          #     containerRegistry: "DockerRegistryServiceConnection"
+          # - task: Docker@2
+          #   displayName: Docker Build and Push
+          #   inputs:
+          #     Dockerfile: "./Dockerfile"
+          #     command: buildAndPush
+          #     repository: "oad3jp999/application-springboot"
+          #     tags: "$(count_version)"
+          # - task: Docker@2
+          #   displayName: Logout of Docker Hub
+          #   inputs:
+          #     command: logout
+          #     containerRegistry: "DockerRegistryServiceConnection"
