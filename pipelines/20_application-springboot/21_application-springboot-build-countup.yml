@@ -41,7 +41,7 @@ stages:
 
               APP=`echo "${applicationName}" | sed 's/\n//g'`
               VERSION=`echo "${version}" | sed 's/\n//g'`
-              VERSION_COUNT_FILE="version/${APP}-${VERSION}"
+              VERSION_COUNT_FILE="$GIT_CONFIG_REPO/version/${APP}-${VERSION}"
               if [ -f "${VERSION_COUNT_FILE}" ]; then
                 echo "${VERSION_COUNT_FILE} exist"
                 PRE_VERSION=$(cat "${VERSION_COUNT_FILE}")
