@@ -1,14 +1,14 @@
 plugins {
+	id 'java'
 	id 'org.springframework.boot' version '2.6.7'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
-	id 'eclipse'
     id 'maven-publish'
+	id 'eclipse'
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+java {
+	sourceCompatibility = '11'
+}
 
 repositories {
 	mavenCentral()
@@ -24,7 +24,7 @@ jar {
 
 dependencies {
 	implementation 'LibraryJar-groupId:library-jar:0.0.2'
-	
+	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -57,13 +57,13 @@ publishing {
 }
 
 allprojects {
-	repositories { 
-		maven { 
-			url 'https://pkgs.dev.azure.com/SecOrgOad3/cicd-training-env/_packaging/cicd-training-env-feed-001/maven/v1' 
-			credentials { 
-				username "cicd-training-env-feed-001" 
-				password System.getenv("SYSTEM_ACCESSTOKEN") != null ? System.getenv("SYSTEM_ACCESSTOKEN") : vstsMavenAccessToken 
-			} 
-		} 
+	repositories {
+		maven {
+			url 'https://pkgs.dev.azure.com/SecOrgOad3/cicd-training-env/_packaging/cicd-training-env-feed-001/maven/v1'
+			credentials {
+				username "cicd-training-env-feed-001"
+				password System.getenv("SYSTEM_ACCESSTOKEN") != null ? System.getenv("SYSTEM_ACCESSTOKEN") : vstsMavenAccessToken
+			}
+		}
 	}
 }
