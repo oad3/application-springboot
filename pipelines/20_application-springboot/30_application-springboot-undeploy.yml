@@ -35,4 +35,4 @@ stages:
               kubectl delete -f $GIT_CONFIG_REPO/$DEPLOY_YML
               # kubectl delete -f $GIT_CONFIG_REPO/$CONFIGMAP_YML
 
-            displayName: "release"
+            displayName: "Undeploy"
