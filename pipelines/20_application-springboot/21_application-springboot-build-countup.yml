@@ -26,15 +26,15 @@ stages:
               source ./env-files/my_env01_vars.env
               source ./gradle.properties
 
-              # echo ----- git clone config repo
-              # chmod 744 ./shell/git-clone.sh
-              # ./shell/git-clone.sh --url ${GIT_URL} \
-              # --github_user $(github-user) \
-              # --github_token $(github-token)
-
               echo ----- git clone config repo
-              git clone https://$(github-token)@github.com/oad3/application-springboot-config.git
-              cd application-springboot-config
+              chmod 744 ./shell/git-clone.sh
+              ./shell/git-clone.sh --url ${GIT_URL} \
+              --github_user $(github-user) \
+              --github_token $(github-token)
+
+              # echo ----- git clone config repo
+              # git clone https://$(github-token)@github.com/oad3/application-springboot-config.git
+              # cd application-springboot-config
 
               echo ----- ls -la
               ls -la
