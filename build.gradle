@@ -13,6 +13,14 @@ repositories {
 	mavenCentral()
 }
 
+bootJar {
+    archiveFileName = "${project.property('applicationName')}-${project.property('publishVersion')}.jar"
+}
+
+jar {
+	enabled = false //Jar作成
+}
+
 dependencies {
 	implementation 'LibraryJar-groupId:library-jar:0.0.2'
 	
@@ -23,6 +31,28 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+publishing {
+	publications {
+		myPublication(MavenPublication) {
+			groupId "${project.property('group')}"
+			artifactId  "${project.property('applicationName')}"
+			version "${project.property('publishVersion')}"		// Your package version
+			artifact "./build/libs/${project.property('applicationName')}-${project.property('publishVersion')}.jar"	//Example: *./target/myJavaClasses.jar*
+		}
+	}
+
+	// Repositories *to* which Gradle can publish artifacts
+	repositories {
+		maven {
+			url 'https://pkgs.dev.azure.com/SecOrgOad3/cicd-training-env/_packaging/cicd-training-env-feed-001/maven/v1'
+			credentials {
+				username "cicd-training-env-feed-001"
+				password System.getenv("SYSTEM_ACCESSTOKEN") != null ? System.getenv("SYSTEM_ACCESSTOKEN") : vstsMavenAccessToken
+			}
+		}
+	}
 }
 
 allprojects {
