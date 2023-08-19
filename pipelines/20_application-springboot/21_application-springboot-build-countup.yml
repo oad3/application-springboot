@@ -57,21 +57,21 @@ stages:
               fi
               echo "##vso[task.setvariable variable=count_version;]${VERSION}-${ADD_VERSION}"
 
-              echo ----- git push VERSION_COUNT_FILE
-              git config --global user.email "$(email)"
-              git config --global user.name "$(name)"
-              git add :
-              git commit -a -m "Count Up Build Num"
-              git push https://$(github-token)@github.com/oad3/application-springboot-config.git --all
+              # echo ----- git push VERSION_COUNT_FILE
+              # git config --global user.email "$(email)"
+              # git config --global user.name "$(name)"
+              # git add :
+              # git commit -a -m "Count Up Build Num"
+              # git push https://$(github-token)@github.com/oad3/application-springboot-config.git --all
 
-              # chmod 744 ./shell/git-push.sh
-              # ./shell/git-push.sh \
-              # --url $GIT_URL \
-              # --github_user $(github-user) \
-              # --github_token $(github-token) \
-              # --github_repo $GIT_CONFIG_REPO \
-              # --github_email $GIT_EMAIL \
-              # --github_name $GIT_NAME
+              chmod 744 ./shell/git-push.sh
+              ./shell/git-push.sh \
+              --url $GIT_URL \
+              --github_user $(github-user) \
+              --github_token $(github-token) \
+              --github_repo $GIT_CONFIG_REPO \
+              --github_email $GIT_EMAIL \
+              --github_name $GIT_NAME
             displayName: "Count Up Build Num"
 
           - bash: |
