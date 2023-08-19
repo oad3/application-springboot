@@ -28,8 +28,8 @@ stages:
           - checkout: "application-springboot-config"
 
           - bash: |
-              source ./env-files/my_env01_vars.env
-              source ./gradle.properties
+              source ./application-springboot/env-files/my_env01_vars.env
+              source ./application-springboot/gradle.properties
 
               # echo ----- git clone config repo
               # chmod 744 ./shell/git-clone.sh
