@@ -7,14 +7,6 @@ pool:
 variables:
   - group: variablegroup
 
-resources:
-  repositories:
-    - repository: "application-springboot-config"
-      type: github
-      ref: main
-      endpoint: "GitHub-Service-Connection"
-      name: "oad3/application-springboot-config"
-
 stages:
   - stage: BuildStage
     jobs:
@@ -25,13 +17,10 @@ stages:
           clean: outputs
         steps:
           - checkout: self
-            clean: true
-          - checkout: "application-springboot-config"
-            clean: true
 
           - bash: |
-              source ./application-springboot/env-files/my_env01_vars.env
-              source ./application-springboot/gradle.properties
+              source ./env-files/my_env01_vars.env
+              source ./gradle.properties
 
               # echo ----- git clone config repo
               # chmod 744 ./shell/git-clone.sh
@@ -39,12 +28,15 @@ stages:
               # --github_user $(github-user) \
               # --github_token $(github-token)
 
+              echo ----- git clone config repo
+              git clone https://$(github-token)@github.com/oad3/application-springboot-config.git
+              cd application-springboot-config
+
               echo ----- ls -la
               ls -la
-              ls -la ${GIT_CONFIG_REPO}
 
-              APP=`echo ${applicationName} | sed 's/\n//g'`
-              VERSION=`echo ${version} | sed 's/\n//g'`
+              APP=`echo "${applicationName}" | sed 's/\n//g'`
+              VERSION=`echo "${version}" | sed 's/\n//g'`
               VERSION_COUNT_FILE="${GIT_CONFIG_REPO}/version/${APP}-${VERSION}"
               if [ -f "${VERSION_COUNT_FILE}" ]; then
                 echo "${VERSION_COUNT_FILE} exist"
@@ -61,23 +53,21 @@ stages:
               fi
               echo "##vso[task.setvariable variable=count_version;]${VERSION}-${ADD_VERSION}"
 
-              # chmod 744 ./${GIT_APP_REPO}/shell/git-push.sh
-              # ./${GIT_APP_REPO}/shell/git-push.sh \
-              # --url $GIT_URL \
-              # --github_user $(github-user) \
-              # --github_token $(github-token) \
-              # --github_repo $GIT_APP_REPO \
-              # --github_email $GIT_EMAIL \
-              # --github_name $GIT_NAME
-
               echo ----- git push VERSION_COUNT_FILE
-              cd ${GIT_CONFIG_REPO}
               git config --global user.email "$(email)"
               git config --global user.name "$(name)"
               git add :
               git commit -a -m "Count Up Build Num"
-              # git push https://$(github-token)@github.com/oad3/application-springboot-config.git --all
-              git push origin main
+              git push https://$(github-token)@github.com/oad3/application-springboot-config.git --all
+
+              # chmod 744 ./shell/git-push.sh
+              # ./shell/git-push.sh \
+              # --url $GIT_URL \
+              # --github_user $(github-user) \
+              # --github_token $(github-token) \
+              # --github_repo $GIT_CONFIG_REPO \
+              # --github_email $GIT_EMAIL \
+              # --github_name $GIT_NAME
             displayName: "Count Up Build Num"
 
           - bash: |
@@ -87,35 +77,35 @@ stages:
               echo $JAVA_HOME_11_X64
             displayName: "Get pre info"
 
-          # - task: Gradle@2
-          #   displayName: Gradle Build and Test
-          #   inputs:
-          #     gradleWrapperFile: "./gradlew"
-          #     workingDirectory: "./"
-          #     tasks: "build test"
-          #     publishJUnitResults: true
-          #     testResultsFiles: "**/TEST-*.xml"
-          #     javaHomeOption: "path"
-          #     jdkDirectory: "$(JAVA_HOME_11_X64)"
-          #     sonarQubeRunAnalysis: false
-          #     spotBugsAnalysis: false
-          #   env:
-          #     SYSTEM_ACCESSTOKEN: "$(System.AccessToken)"
+          - task: Gradle@2
+            displayName: Gradle Build and Test
+            inputs:
+              gradleWrapperFile: "./gradlew"
+              workingDirectory: "./"
+              tasks: "build test"
+              publishJUnitResults: true
+              testResultsFiles: "**/TEST-*.xml"
+              javaHomeOption: "path"
+              jdkDirectory: "$(JAVA_HOME_11_X64)"
+              sonarQubeRunAnalysis: false
+              spotBugsAnalysis: false
+            env:
+              SYSTEM_ACCESSTOKEN: "$(System.AccessToken)"
 
-          # - task: Docker@2
-          #   displayName: Login to Docker Hub
-          #   inputs:
-          #     command: login
-          #     containerRegistry: "DockerRegistryServiceConnection"
-          # - task: Docker@2
-          #   displayName: Docker Build and Push
-          #   inputs:
-          #     Dockerfile: "./Dockerfile"
-          #     command: buildAndPush
-          #     repository: "oad3jp999/application-springboot"
-          #     tags: "$(count_version)"
-          # - task: Docker@2
-          #   displayName: Logout of Docker Hub
-          #   inputs:
-          #     command: logout
-          #     containerRegistry: "DockerRegistryServiceConnection"
+          - task: Docker@2
+            displayName: Login to Docker Hub
+            inputs:
+              command: login
+              containerRegistry: "DockerRegistryServiceConnection"
+          - task: Docker@2
+            displayName: Docker Build and Push
+            inputs:
+              Dockerfile: "./Dockerfile"
+              command: buildAndPush
+              repository: "oad3jp999/application-springboot"
+              tags: "$(count_version)"
+          - task: Docker@2
+            displayName: Logout of Docker Hub
+            inputs:
+              command: logout
+              containerRegistry: "DockerRegistryServiceConnection"
