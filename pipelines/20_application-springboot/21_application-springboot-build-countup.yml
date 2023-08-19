@@ -37,7 +37,7 @@ stages:
 
               APP=`echo "${applicationName}" | sed 's/\n//g'`
               VERSION=`echo "${version}" | sed 's/\n//g'`
-              VERSION_COUNT_FILE="${GIT_CONFIG_REPO}/version/${APP}-${VERSION}"
+              VERSION_COUNT_FILE="version/${APP}-${VERSION}"
               if [ -f "${VERSION_COUNT_FILE}" ]; then
                 echo "${VERSION_COUNT_FILE} exist"
                 PRE_VERSION=$(cat "${VERSION_COUNT_FILE}")
@@ -77,35 +77,35 @@ stages:
               echo $JAVA_HOME_11_X64
             displayName: "Get pre info"
 
-          - task: Gradle@2
-            displayName: Gradle Build and Test
-            inputs:
-              gradleWrapperFile: "./gradlew"
-              workingDirectory: "./"
-              tasks: "build test"
-              publishJUnitResults: true
-              testResultsFiles: "**/TEST-*.xml"
-              javaHomeOption: "path"
-              jdkDirectory: "$(JAVA_HOME_11_X64)"
-              sonarQubeRunAnalysis: false
-              spotBugsAnalysis: false
-            env:
-              SYSTEM_ACCESSTOKEN: "$(System.AccessToken)"
+          # - task: Gradle@2
+          #   displayName: Gradle Build and Test
+          #   inputs:
+          #     gradleWrapperFile: "./gradlew"
+          #     workingDirectory: "./"
+          #     tasks: "build test"
+          #     publishJUnitResults: true
+          #     testResultsFiles: "**/TEST-*.xml"
+          #     javaHomeOption: "path"
+          #     jdkDirectory: "$(JAVA_HOME_11_X64)"
+          #     sonarQubeRunAnalysis: false
+          #     spotBugsAnalysis: false
+          #   env:
+          #     SYSTEM_ACCESSTOKEN: "$(System.AccessToken)"
 
-          - task: Docker@2
-            displayName: Login to Docker Hub
-            inputs:
-              command: login
-              containerRegistry: "DockerRegistryServiceConnection"
-          - task: Docker@2
-            displayName: Docker Build and Push
-            inputs:
-              Dockerfile: "./Dockerfile"
-              command: buildAndPush
-              repository: "oad3jp999/application-springboot"
-              tags: "$(count_version)"
-          - task: Docker@2
-            displayName: Logout of Docker Hub
-            inputs:
-              command: logout
-              containerRegistry: "DockerRegistryServiceConnection"
+          # - task: Docker@2
+          #   displayName: Login to Docker Hub
+          #   inputs:
+          #     command: login
+          #     containerRegistry: "DockerRegistryServiceConnection"
+          # - task: Docker@2
+          #   displayName: Docker Build and Push
+          #   inputs:
+          #     Dockerfile: "./Dockerfile"
+          #     command: buildAndPush
+          #     repository: "oad3jp999/application-springboot"
+          #     tags: "$(count_version)"
+          # - task: Docker@2
+          #   displayName: Logout of Docker Hub
+          #   inputs:
+          #     command: logout
+          #     containerRegistry: "DockerRegistryServiceConnection"
