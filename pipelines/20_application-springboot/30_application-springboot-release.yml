@@ -23,6 +23,7 @@ stages:
           clean: outputs
         steps:
           - checkout: self
+            clean: true
 
           - bash: |
               source ./env-files/my_env01_vars.env
@@ -37,11 +38,20 @@ stages:
               echo ----- ls -la
               ls -la
 
-              chmod 744 ./shell/release.sh
-              ./shell/release.sh \
-              --tag_version ${{ parameters.tag }} \
-              --name_space $NAMESPACE \
-              --deploy_yaml $GIT_CONFIG_REPO/$DEPLOY_YML \
-              --deploy_name $DEPLOY_NAME \
-              --config_map_yaml $GIT_CONFIG_REPO/$CONFIGMAP_YML
+              ls -la $GIT_CONFIG_REPO/manifest
+              sed -ie "s/@tag@/${{parameters.tag}}/g" $GIT_CONFIG_REPO/$DEPLOY_YML
+              echo "### release configMap manifest file ###"
+              cat $GIT_CONFIG_REPO/$CONFIGMAP_YML
+              echo "### release deployment manifest file ###"
+              cat $GIT_CONFIG_REPO/$DEPLOY_YML
+              # kubectl apply -f $GIT_CONFIG_REPO/$CONFIGMAP_YML
+              kubectl apply -f $GIT_CONFIG_REPO/$DEPLOY_YML
+
+              # chmod 744 ./shell/release.sh
+              # ./shell/release.sh \
+              # --tag_version ${{ parameters.tag }} \
+              # --name_space $NAMESPACE \
+              # --deploy_yaml $GIT_CONFIG_REPO/$DEPLOY_YML \
+              # --deploy_name $DEPLOY_NAME \
+              # --config_map_yaml $GIT_CONFIG_REPO/$CONFIGMAP_YML
             displayName: "release"
