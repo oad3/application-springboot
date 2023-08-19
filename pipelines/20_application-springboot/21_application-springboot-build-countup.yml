@@ -25,7 +25,9 @@ stages:
           clean: outputs
         steps:
           - checkout: self
+            clean: true
           - checkout: "application-springboot-config"
+            clean: true
 
           - bash: |
               source ./application-springboot/env-files/my_env01_vars.env
