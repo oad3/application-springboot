@@ -2,7 +2,7 @@ trigger:
   - none
 
 pool:
-  name: vaio
+  name: Self-Hosted-Linux
 
 resources:
   repositories:
