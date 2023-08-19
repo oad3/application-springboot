@@ -35,6 +35,7 @@ stages:
 
               echo ----- ls -la
               ls -la
+              java --version
 
               APP=`echo "${applicationName}" | sed 's/\n//g'`
               VERSION=`echo "${version}" | sed 's/\n//g'`
