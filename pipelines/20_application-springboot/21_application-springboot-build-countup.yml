@@ -83,29 +83,29 @@ stages:
               echo $JAVA_HOME_11_X64
             displayName: "Get pre info"
 
-          - task: Gradle@2
-            displayName: Gradle Build and Test
-            inputs:
-              gradleWrapperFile: "./gradlew"
-              workingDirectory: "./"
-              tasks: "build test"
-              publishJUnitResults: true
-              testResultsFiles: "**/TEST-*.xml"
-              javaHomeOption: "path"
-              jdkDirectory: "/usr/lib/jvm/java-11-openjdk-amd64"
-              sonarQubeRunAnalysis: false
-              spotBugsAnalysis: false
-            env:
-              SYSTEM_ACCESSTOKEN: "$(System.AccessToken)"
+          # - task: Gradle@2
+          #   displayName: Gradle Build and Test
+          #   inputs:
+          #     gradleWrapperFile: "./gradlew"
+          #     workingDirectory: "./"
+          #     tasks: "build test"
+          #     publishJUnitResults: true
+          #     testResultsFiles: "**/TEST-*.xml"
+          #     javaHomeOption: "path"
+          #     jdkDirectory: "/usr/lib/jvm/java-11-openjdk-amd64"
+          #     sonarQubeRunAnalysis: false
+          #     spotBugsAnalysis: false
+          #   env:
+          #     SYSTEM_ACCESSTOKEN: "$(System.AccessToken)"
 
-          # - bash: |
-          #     chmod 744 ./gradlew
-          #     ./gradlew clean build -PpublishVersion=${count_version}
-          #     ls -la
-          #     ls -la ./build
-          #     ls -la ./build/libs
-          #     ./gradlew publish -PvstsMavenAccessToken=$(github-token) -PpublishVersion=$(count_version)
-          #   displayName: "Gradle Build & Publish"
+          - bash: |
+              chmod 744 ./gradlew
+              ./gradlew clean build -PpublishVersion=$(count_version)
+              ls -la
+              ls -la ./build
+              ls -la ./build/libs
+              ./gradlew publish -PvstsMavenAccessToken=$(System.AccessToken) -PpublishVersion=$(count_version)
+            displayName: "Gradle Build & Publish"
 
           - task: Docker@2
             displayName: Login to Docker Hub
