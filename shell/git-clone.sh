@@ -3,10 +3,6 @@
 ########################################
 # 引数
 ########################################
-# デフォルト値の設定
-url=""
-github_token=""
-
 # 引数とオプションの解析
 while (( $# > 0 )); do
   case "$1" in
@@ -37,10 +33,6 @@ source ./shell/common/utill.sh
 ########################################
 # 引数チェック
 ########################################
-echo "url: $url"
-echo "github_user: $github_user"
-echo "github_token: $github_token"
-
 if [ -z "$url" ]; then
     log "エラー: $url urlが空です"
     exit 1

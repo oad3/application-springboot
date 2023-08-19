@@ -1,0 +1,47 @@
+trigger:
+  - none
+
+pool:
+  name: Self-Hosted-Linux
+
+parameters:
+  - name: tag
+    displayName: "release tag"
+    type: string
+    default: ""
+
+variables:
+  - group: variablegroup
+
+stages:
+  - stage: Releasetage
+    jobs:
+      - job: release
+        displayName: "release"
+        continueOnError: false
+        workspace:
+          clean: outputs
+        steps:
+          - checkout: self
+
+          - bash: |
+              source ./env-files/my_env01_vars.env
+              source ./gradle.properties
+
+              echo ----- git clone config repo
+              chmod 744 ./shell/git-clone.sh
+              ./shell/git-clone.sh --url ${GIT_URL} \
+              --github_user $(github-user) \
+              --github_token $(github-token)
+
+              echo ----- ls -la
+              ls -la
+
+              chmod 744 ./shell/release.sh
+              ./shell/release.sh \
+              --tag_version ${{ parameters.tag }} \
+              --name_space $NAMESPACE \
+              --deploy_yaml $GIT_CONFIG_REPO/$DEPLOY_YML \
+              --deploy_name $DEPLOY_NAME \
+              --config_map_yaml $GIT_CONFIG_REPO/$CONFIGMAP_YML
+            displayName: "release"
