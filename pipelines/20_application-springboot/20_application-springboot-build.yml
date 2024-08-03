@@ -14,7 +14,7 @@ resources:
   repositories:
     - repository: "application-springboot"
       type: github
-      ref: main
+      ref: datadog
       endpoint: "GitHub-Service-Connection"
       name: "oad3/application-springboot"
 
