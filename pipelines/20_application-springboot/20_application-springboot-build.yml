@@ -7,8 +7,10 @@ parameters:
     type: string
     default: ""
 
+# pool:
+#   vmImage: "ubuntu-latest"
 pool:
-  vmImage: "ubuntu-latest"
+  name: Self-Hosted-Linux
 
 resources:
   repositories:
