@@ -17,4 +17,5 @@ spec:
           name: springbootapp
           ports:
             - containerPort: 8080
+            - containerPort: 8126
       restartPolicy: Always
