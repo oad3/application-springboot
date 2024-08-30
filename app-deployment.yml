@@ -22,7 +22,6 @@ spec:
         admission.datadoghq.com/enabled: "true"
       annotations:
         admission.datadoghq.com/java-lib.version: v1.38.1
-      annotations:
         ad.datadoghq.com/springbootapp.checks: |
           {
             "jmx": {
