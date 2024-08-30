@@ -14,4 +14,4 @@ EXPOSE 8080
 # CMD [ "java", "-javaagent:/usr/src/myapp/dd-java-agent.jar", "-Ddd.profiling.enabled=true", "-XX:FlightRecorderOptions=stackdepth=256", "-Ddd.logs.injection=true", "-Ddd.service=my-app", "-Ddd.env=staging", "-Ddd.version=1.0", "-jar", "/usr/src/myapp/application.jar", "-Dcom.sun.management.jmxremote", "-Dcom.sun.management.jmxremote.authenticate=false", "-Dcom.sun.management.jmxremote.ssl=false", "-Dcom.sun.management.jmxremote.local.only=false", "-Dcom.sun.management.jmxremote.port=8081", "-Dcom.sun.management.jmxremote.rmi.port=8081", "-Djava.rmi.server.hostname=$(POD_IP)" ]
 # CMD [ "java" "-jar", "/usr/src/myapp/application.jar", "-Dcom.sun.management.jmxremote", "-Dcom.sun.management.jmxremote.authenticate=false", "-Dcom.sun.management.jmxremote.ssl=false", "-Dcom.sun.management.jmxremote.local.only=false", "-Dcom.sun.management.jmxremote.port=8081", "-Dcom.sun.management.jmxremote.rmi.port=8081", "-Djava.rmi.server.hostname=$(POD_IP)" ]
 
-java $JAVA_OPTS 
+CMD java $JAVA_OPTS 
