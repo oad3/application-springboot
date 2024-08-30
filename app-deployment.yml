@@ -9,8 +9,23 @@ spec:
       io.kompose.service: springbootapp
   template:
     metadata:
+      name: springbootapp
       labels:
         io.kompose.service: springbootapp
+      annotations:
+        ad.datadoghq.com/springbootapp.checks: |
+          {
+            "jmx": {
+              "init_config": {
+                "is_jmx": true,
+                "collect_default_metrics": true
+              },
+              "instances": [{
+                "host": "%%host%%",
+                "port": "8081"
+              }]
+            }
+          }
     spec:
       containers:
         - image: oad3jp999/application-springboot:0.0.1
@@ -18,4 +33,9 @@ spec:
           ports:
             - containerPort: 8080
             - containerPort: 8126
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
       restartPolicy: Always
