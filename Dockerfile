@@ -15,4 +15,4 @@ EXPOSE 8080
 # CMD [ "java" "-jar", "/usr/src/myapp/application.jar", "-Dcom.sun.management.jmxremote", "-Dcom.sun.management.jmxremote.authenticate=false", "-Dcom.sun.management.jmxremote.ssl=false", "-Dcom.sun.management.jmxremote.local.only=false", "-Dcom.sun.management.jmxremote.port=8081", "-Dcom.sun.management.jmxremote.rmi.port=8081", "-Djava.rmi.server.hostname=$(POD_IP)" ]
 
 # CMD [ "java", "-jar", "application.jar" ]
-CMD [ "/bin/sh", "-c", "java -jar /usr/src/myapp/application.jar $JAVA_OPTS" ]
+CMD [ "/bin/sh", "-c", "java $JAVA_OPTS -jar /usr/src/myapp/application.jar" ]
