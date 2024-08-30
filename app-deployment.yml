@@ -2,6 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: springbootapp-deployment
+  labels:
+    tags.datadoghq.com/env: app
+    tags.datadoghq.com/service: springbootapp-deployment
+    tags.datadoghq.com/version: 0.0.10
 spec:
   replicas: 1
   selector:
@@ -12,6 +16,12 @@ spec:
       name: springbootapp
       labels:
         io.kompose.service: springbootapp
+        tags.datadoghq.com/env: app
+        tags.datadoghq.com/service: springbootapp-deployment
+        tags.datadoghq.com/version: 0.0.10
+        admission.datadoghq.com/enabled: "true"
+      annotations:
+        admission.datadoghq.com/java-lib.version: v1.38.1
       annotations:
         ad.datadoghq.com/springbootapp.checks: |
           {
@@ -34,6 +44,8 @@ spec:
             - containerPort: 8080
             - containerPort: 8126
           env:
+            - name: DD_LOGS_INJECTION
+              value: "true"
             - name: POD_IP
               valueFrom:
                 fieldRef:
