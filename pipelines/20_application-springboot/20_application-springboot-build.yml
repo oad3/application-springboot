@@ -30,7 +30,7 @@ stages:
           - checkout: self
           - checkout: application-springboot
           - bash: |
-              echo $JAVA_HOME_11_X64
+              echo $JAVA_HOME_17_X64
           - task: Gradle@2
             displayName: Gradle Build and Test
             inputs:
@@ -40,7 +40,7 @@ stages:
               publishJUnitResults: true
               testResultsFiles: "**/TEST-*.xml"
               javaHomeOption: "path"
-              jdkDirectory: "$(JAVA_HOME_11_X64)"
+              jdkDirectory: "$(JAVA_HOME_17_X64)"
               sonarQubeRunAnalysis: false
               spotBugsAnalysis: false
             env:
